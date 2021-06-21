@@ -15,7 +15,12 @@ namespace SoapCore.ServiceModel
 		public OperationDescription(ContractDescription contract, MethodInfo operationMethod, OperationContractAttribute contractAttribute)
 		{
 			Contract = contract;
-			Name = contractAttribute.Name ?? GetNameByAction(contractAttribute.Action) ?? GetNameByMethod(operationMethod);
+			Name = contractAttribute.Name ?? GetNameByAction(contractAttribute.Action.TrimEnd('/')) ?? GetNameByMethod(operationMethod);
+			if (Name.StartsWith("wsdl"))
+			{
+				Name = Name.Substring(4);
+			}
+
 			SoapAction = contractAttribute.Action ?? $"{contract.Namespace.TrimEnd('/')}/{contract.Name}/{Name}";
 			IsOneWay = contractAttribute.IsOneWay;
 			DispatchMethod = operationMethod;
