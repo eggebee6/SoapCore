@@ -336,6 +336,9 @@ namespace SoapCore
 					ExecuteFiltersAndTune(httpContext, serviceProvider, operation, arguments, serviceInstance);
 
 					var invoker = serviceProvider.GetService<IOperationInvoker>() ?? new DefaultOperationInvoker();
+					var operationFilter = serviceProvider.GetService<IOperationFilter>();
+
+					await operationFilter?.PreInvoke(requestMessage, operation.DispatchMethod);
 					var responseObject = await invoker.InvokeAsync(operation.DispatchMethod, serviceInstance, arguments);
 
 					if (operation.IsOneWay)
